@@ -1,4 +1,4 @@
-/*
+/**
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -10,12 +10,20 @@ import java.util.Arrays;
 /**
  *
  * @author gabriel
+ * A classe ExpressaoRegular verifica se a expressao regular
+ * corresponde ao texto dado
  */
 public class ExpressaoRegular
 {
     private String texto_a_ser_verificado;
     private String expressao_Regular;
 
+    /**
+     * construtor que recebe dois parametros
+     * @param textoParaVerificar variavel que armazena o texto a ser verificado 
+     * contra a expressao regular
+     * @param expressaoRegular variavel que armazena a expressao regular
+     */
     public ExpressaoRegular(String textoParaVerificar, String expressaoRegular)
     { 
         this.texto_a_ser_verificado = textoParaVerificar;
@@ -45,42 +53,84 @@ public class ExpressaoRegular
     @Override
     public String toString()
     {
-        return "ExpressaoRegular{" + "texto_a_ser_verificado=" + texto_a_ser_verificado + ", expressao_Regular=" + expressao_Regular + '}';
+            return "ExpressaoRegular{" + "texto_a_ser_verificado=" + texto_a_ser_verificado + ", expressao_Regular=" + expressao_Regular + '}';
     }
     
-    //funcao que verifica a compatibilidade entra o texto digitado e a expressao regular
-    //convertida para regex do java
-    //se for compativel retorna true caso contrario false
+    /**funcao que verifica a compatibilidade entra o texto digitado e a expressao regular
+     * convertida para regex do java
+     * se for compativel retorna true caso contrario false
+     * 
+     * @param texto armazena o texto digitado
+     * @param expressaoRegular armazena a expressao regular
+     */
     boolean verificaCompatibilidadeTextoExpressaoRegular(String texto, String expressaoRegular)
-    {
-        return texto.matches(expressaoRegular);
+    {       
+            /** retorna true se o texto e compativel com a expressao regular */
+            return texto.matches(expressaoRegular);
     }
     
-    //verifica compatibilidade da expressao e do texto digitados pelo usuario
+    /**
+     *  
+     */
+    String verificaFimExpressaoRegular(String expressaoRegular)
+    {
+        int tamanho = expressaoRegular.length();
+        
+        if(expressaoRegular.charAt(tamanho - 1) == ']')
+        {
+                return expressaoRegular.substring(0, tamanho - 1) + "$]";
+        }
+        else
+        {
+                /** se o ultimo caractere da expressao nao e ']'
+                 * entao se tem algo do tipo ']+' ou ']*'
+                 * sendo assim sera necessario colocar o segundo caractere em uma
+                 * variavel "temporaria" e substituir por "$]'temporaria'"
+                 */
+                char temporaria = expressaoRegular.charAt(tamanho - 1);
+                /** substring sem ']+', ']*' */
+                String expressaoSubstring = expressaoRegular.substring(0, tamanho - 2);
+                /** remontar expressao so que agora ficara:
+                 * '$]+', '$]*'
+                 */
+                expressaoRegular = expressaoSubstring + "$]" + temporaria;
+                
+                return expressaoRegular;
+        }
+          
+    }
+    
+    /** funcao que verifica compatibilidade da expressao 
+     *  e do texto digitados pelo usuario
+     */
     boolean verificaCompatibilidadeExpressaoRegularComTexto()
     {
-        //expressao regular reconhecida pelo java
+        /** expressao regular reconhecida pelo java */
         String padraoExpressaoRegular = "";
         
-        //verifica se tem marcador de fim de expressao
-        //se nao tiver pode acrescentar na expressao regular qualquer caractere
-        //0 indica que nao tem marcador 1 caso contrario
+        /** verifica se tem marcador de fim de expressao
+         *  se nao tiver pode acrescentar na expressao regular qualquer caractere
+         *  0 indica que nao tem marcador 1 caso contrario
+         */
         int verificaMarcadorFimExpressao = 0;
         
-        //verifica se tem marcador de fim de expressao
-        //se nao tiver pode acrescentar na expressao regular qualquer caractere
-        //0 indica que nao tem marcador 1 caso contrario
+        /** verifica se tem marcador de fim de expressao
+         *  se nao tiver pode acrescentar na expressao regular qualquer caractere
+         *  0 indica que nao tem marcador 1 caso contrario
+         */
         int verificaMarcadorInicioExpressao = 0;
         
-        //se a expressao regular digitada pelo usuario for vazia
-        //e o texto digitado for diferente de vazio retorna false
+        
+        /** se a expressao regular digitada pelo usuario for vazia
+         *  e o texto digitado for diferente de vazio retorna false
+         */
         if(this.expressao_Regular.compareTo("") == 0)
             if(this.expressao_Regular.compareTo(this.texto_a_ser_verificado) != 0)
                 return false;
         
         if(this.texto_a_ser_verificado.startsWith("## "))
         {
-            //procura "## " no inicio do texto
+            /** procura "## " no inicio do texto */
             String[] textoArray;
             
             textoArray = this.texto_a_ser_verificado.split("## ");
@@ -89,17 +139,17 @@ public class ExpressaoRegular
         
         if(this.texto_a_ser_verificado.endsWith(" ##"))
         {
-            //procura " ##" no fim do texto
+            /** procura " ##" no fim do texto */
             String[] textoArray;
             
             textoArray = this.texto_a_ser_verificado.split(" ##");
             this.setTexto_a_ser_verificado(textoArray[0]);
         }
         
-        //se o texto e a expressao regular forem iguais retorna true
+        /** se o texto e a expressao regular forem iguais retorna true */
         if(this.texto_a_ser_verificado.compareTo(this.expressao_Regular) == 0)
         {
-            //texto e expressao sao iguais
+            /** texto e expressao sao iguais */
             return true;
         }
         
@@ -108,38 +158,42 @@ public class ExpressaoRegular
             
             if(this.expressao_Regular.charAt(cont) == '^')
             {
-                //o caractere 'ˆ' indica o inicio da sequencia
-                //de entrada entao a expressao regular inicia agora
+                /** o caractere 'ˆ' indica o inicio da sequencia
+                 *  de entrada entao a expressao regular inicia agora
+                 */ 
                 verificaMarcadorInicioExpressao = 1;
                 padraoExpressaoRegular = "";
             }
             else if(this.expressao_Regular.charAt(cont) == '$')
             {
-                //como e o fim da sequencia de entrada indicado por '$'
-                //nao há mais nada a adicionar na expressao regular
+                /** como e o fim da sequencia de entrada indicado por '$'
+                 *  nao há mais nada a adicionar na expressao regular
+                 */
                 verificaMarcadorFimExpressao = 1;
-                break;
+                padraoExpressaoRegular += "$";
             }
             else if(this.expressao_Regular.charAt(cont) == '.')
             {
-                //qualquer caractere unico
-                //equivalente a = [a-zA-Z0-9\\p{Punct}]
+                /** qualquer caractere unico
+                 *  equivalente a = [a-zA-Z0-9\\p{Punct}]
+                 */
                 padraoExpressaoRegular += "[\\p{Graph}]";
             }
             else if(this.expressao_Regular.charAt(cont) == 'c')
             {
-                //qualquer caractere unico
+                /** qualquer caractere unico */
                 padraoExpressaoRegular += "[c]";
             }
             else if(this.expressao_Regular.charAt(cont) == '*')
             {
-                //indica zero ou mais ocorrencias da regra
-                //que precede '*'
+                /** indica zero ou mais ocorrencias da regra
+                 *  que precede '*'
+                 */
                 padraoExpressaoRegular += "*";
             }
             else
             {
-                //acrescenta o proximo caractere na expressao regular
+                /** acrescenta o proximo caractere na expressao regular */
                 padraoExpressaoRegular += "[" + this.expressao_Regular.charAt(cont) + "]";
             } 
         }
@@ -149,9 +203,9 @@ public class ExpressaoRegular
         
         if(verificaMarcadorInicioExpressao == 0)
             padraoExpressaoRegular = "[\\p{Graph}]*" + padraoExpressaoRegular;
-        //System.out.println(padraoExpressaoRegular);
         
-        //verifica a compatibilidade
+        
+        /** verifica a compatibilidade */
         return verificaCompatibilidadeTextoExpressaoRegular(this.texto_a_ser_verificado, padraoExpressaoRegular);
     }
     
